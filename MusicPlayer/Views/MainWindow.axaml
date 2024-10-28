@@ -1,0 +1,134 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:MusicPlayer.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="600"
+        Width="600" Height="600"
+        x:Class="MusicPlayer.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Music Player">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <Grid HorizontalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="200"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel HorizontalAlignment="Center">
+            <TextBlock Text="Music Player"
+                       FontSize="24"
+                       HorizontalAlignment="Center"
+                       Margin="0 20"/>
+
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBox MinWidth="400"
+                         Margin="0 0 10 0"
+                         Text="{Binding DownloadUrl}"/>
+                <Button Content="Download" Command="{Binding Test}" HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <TextBlock Text="{Binding DownloadStatus}" HorizontalAlignment="Center"/>
+
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <Button Content="{Binding AudioPlayer.PausePlaySymbol}" Command="{Binding AudioPlayer.PausePlay}"></Button>
+                <Slider Minimum="0"
+                        Maximum="1"
+                        Width="100"
+                        Margin="10 -10 0 -10"
+                        Value="{Binding AudioPlayer.Volume, Mode=TwoWay}"/>
+            </StackPanel>
+
+            <Slider Minimum="0"
+                    Maximum="1"
+                    Margin="0 0 0 -10"
+                    Value="{Binding AudioPlayer.Progress, Mode=TwoWay}"/>
+            <TextBlock Text="{Binding AudioPlayer.ProgressText}"
+                       FontFamily="Consolas"
+                       HorizontalAlignment="Center"></TextBlock>
+        </StackPanel>
+
+        <Separator Grid.Row="1"></Separator>
+
+        <Grid Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.25*"/>
+                <RowDefinition Height="0.75*"/>
+            </Grid.RowDefinitions>
+
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Queued"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"/>
+
+                <ScrollViewer Grid.Row="1"
+                              HorizontalAlignment="Stretch">
+                    <ListBox ItemsSource="{Binding AudioPlayer.QueuedTracks}"
+                             HorizontalAlignment="Stretch">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Text="{Binding Track.ShortTitle}"
+                                               HorizontalAlignment="Stretch"
+                                               VerticalAlignment="Center"/>
+                                    <Button Grid.Column="1"
+                                            Content="❌"
+                                            HorizontalAlignment="Right"
+                                            Command="{Binding Remove}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </ScrollViewer>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Tracks"
+                           Margin="0 20 0 0"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"/>
+
+                <TreeView Grid.Row="1"
+                          ItemsSource="{Binding Tracks}"
+                          SelectedItems="{Binding SelectedTracks}"
+                          SelectionMode="Multiple">
+                    <TreeView.ItemTemplate>
+                        <TreeDataTemplate ItemsSource="{Binding Children}">
+                            <TextBlock Text="{Binding ShortTitle}"/>
+                        </TreeDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+
+                <Button Grid.Row="2"
+                        Content="Add to Queue"
+                        Command="{Binding AddToQueue}"
+                        HorizontalAlignment="Center"/>
+            </Grid>
+        </Grid>
+    </Grid>
+
+</Window>
