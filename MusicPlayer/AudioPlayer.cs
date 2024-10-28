@@ -54,7 +54,7 @@ public class AudioPlayer : ObservableObject, IDisposable
                 return;
             }
 
-            if (QueuedTracks.Count > 0) QueuedTracks.RemoveAt(0);
+            if (QueuedTracks.Count > 0) RemoveTrackAt(0);
 
             PlayFirst();
         };
@@ -139,7 +139,7 @@ public class AudioPlayer : ObservableObject, IDisposable
         {
             if (!QueuedTracks[i].Equals(track)) continue;
 
-            QueuedTracks.RemoveAt(i);
+            RemoveTrackAt(i);
 
             if (i == 0 && _outputDevice.PlaybackState == PlaybackState.Playing)
             {
@@ -149,6 +149,19 @@ public class AudioPlayer : ObservableObject, IDisposable
 
             return;
         }
+    }
+
+    private void RemoveTrackAt(int i)
+    {
+        QueuedTracks.RemoveAt(i);
+
+        if (i == 0)
+        {
+            _audioFile = null;
+        }
+
+        OnPropertyChanged(nameof(Progress));
+        OnPropertyChanged(nameof(ProgressText));
     }
 
     private static string ProgressTimeToString(TimeSpan timeSpan)
